@@ -1,0 +1,19 @@
+# Node
+node_modules
+.env
+dist
+package-lock.json
+yarn-error.log
+
+# Logs
+*.log
+
+# OS
+.DS_Store
+
+# Docker
+*.local
+docker-compose.override.yml
+
+# Prisma
+prisma/dev.db
