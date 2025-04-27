@@ -1,0 +1,48 @@
+version: "3.8"
+
+services:
+  db:
+    image: postgres:14
+    restart: always
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: collabspace
+    ports:
+      - "5433:5432"    # ⚡ mapped external port 5433 to internal 5432 to avoid conflicts
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  backend:
+    build: ./server
+    ports:
+      - "5001:5000"
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      - DATABASE_URL=postgresql://postgres:postgres@db:5432/collabspace
+      - JWT_SECRET=your-secret-key
+    volumes:
+      - ./server:/app
+    command: sh -c "npx prisma generate && npm run dev"
+
+  frontend:
+    build: ./client
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+    environment:
+      - NEXT_PUBLIC_API_URL=http://localhost:5001
+    volumes:
+      - ./client:/app
+    command: npm run dev
+
+volumes:
+  postgres_data:
