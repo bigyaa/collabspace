@@ -21,7 +21,7 @@ services:
   backend:
     build: ./server
     ports:
-      - 5001:5000
+      - 5500:5500
     depends_on:
       db:
         condition: service_healthy
@@ -39,7 +39,7 @@ services:
     depends_on:
       - backend
     environment:
-      - NEXT_PUBLIC_API_URL=http://localhost:5001
+      - NEXT_PUBLIC_API_URL=http://localhost:5500
     volumes:
       - ./client:/app
     command: npm run dev
