@@ -2,7 +2,9 @@
 import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
+
 import authRoutes from './routes/auth.routes';
+import documentRoutes from './routes/document.routes';
 
 const app = express();
 
@@ -17,5 +19,8 @@ app.get('/health', (_req, res) => {
 
 // Mount auth routes
 app.use('/api/auth', authRoutes);
+
+// Mount document routes
+app.use('/api/documents', documentRoutes);
 
 export default app;
