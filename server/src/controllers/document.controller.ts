@@ -1,9 +1,11 @@
 import { Request, Response } from 'express';
 import { PrismaClient } from '@prisma/client';
 import jwt from 'jsonwebtoken';
+import { randomBytes } from 'crypto';
 
 const prisma = new PrismaClient();
 
+// Middleware to check if the user is authenticated
 function getUserIdFromRequest(req: Request) {
   const authHeader = req.headers.authorization;
   if (!authHeader) throw new Error('Unauthorized');
@@ -18,7 +20,9 @@ export async function createDocument(req: Request, res: Response) {
     const { title, content } = req.body;
 
     const document = await prisma.document.create({
-      data: { title, content, userId },
+      data: {
+        title, content, userId, shareId: randomBytes(8).toString('hex'), // <-- 16 character random hex string
+      },
     });
 
     res.status(201).json(document);
